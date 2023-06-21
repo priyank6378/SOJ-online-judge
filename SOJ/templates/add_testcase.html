@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+
+<div class="custom-card container" style="margin-top:20px;">
+    <form action="" method="POST"  >
+        <legend class="fs-2">Add Test Case</legend>
+        {{ form.hidden_tag() }}
+        <p class="form-group">
+            {{ form.input.label }}<br>
+            {{ form.input(class='form-control') }}
+        </p>
+        <p class="form-group">
+            {{ form.output.label }}<br>
+            {{ form.output(class='form-control') }}
+        </p>
+        
+        <div class="form-group">
+            {{ form.submit(class='btn btn-primary') }}
+        </div>
+    
+    
+    </form>
+    
+</div>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+
+<div class="custom-card container" style="margin-top:20px;">
+    <form action="/add_problem" method="POST"  >
+        <legend class="fs-2">Add Problem</legend>
+        {{ form.hidden_tag() }}
+        <p class="form-group">
+            {{ form.title.label(class='form-control-label') }}<br>
+            {{ form.title(class='form-control') }}
+        </p>
+        <p class="form-group">
+            {{ form.statement.label }}<br>
+            {{ form.statement(class='form-control') }}
+        </p>
+        <p class="form-group">
+            {{ form.input_format.label }}<br>
+            {{ form.input_format(class='form-control') }}
+        </p>
+        <p class="form-group">
+            {{ form.output_format.label }}<br>
+            {{ form.output_format(class='form-control') }}
+        </p>
+        <p class="form-group">
+            {{ form.constraints.label }}<br>
+            {{ form.constraints(class='form-control') }}
+        </p>
+        
+        <div class="form-group">
+            {{ form.submit(class='btn btn-primary') }}
+        </div>
+    
+    
+    </form>
+    
+</div>
+
+{% endblock %}

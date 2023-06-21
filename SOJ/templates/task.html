@@ -1,0 +1,55 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<div class="container" style="margin-top:10px; margin-bottom:10px; ">
+    <p class="text-center fs-3 text-bolder ">{{ prob.title }}</p>
+    <div class="d-flex flex-row">
+        <a class="custom-link" href="" style="padding:3px;">TASK |</a>
+        <a class="custom-link" href="{{ url_for('main.submit' , id=prob.id) }}" style="padding:3px;"> SUBMIT |</a>
+        <a class="custom-link" href="{{ url_for('main.result' , prob_id=prob.id) }}" style="padding:3px;"> RESULTS |</a>
+        <a class="custom-link" href="" style="padding:3px;"> STATISTICS</a>
+    </div>
+</div>
+
+<div class="container custom-card rounded" style="text-align: center;">
+    <div class="d-flex flex-row justify-content-center ">
+        <p style="font-weight: bold; padding-right: 5px;">Time-Limit: </p>
+        <p>1 sec</p>
+        <p style="font-weight: bold; padding: 0px 5px 0px 20px ;">Memory-Limit: </p>
+        <p>500 mb</p>
+    </div>
+</div>
+
+<div class="mt-3 container custom-card">
+    <h5 class="fw-bold">Statement</h5>
+    <p>{{ prob.statement }}</p>
+</div>
+
+<div class="mt-4 container custom-card">
+    <h5 class="fw-bold">Input</h5>
+    <p>{{ prob.input }}</p>
+</div>
+
+<div class="mt-4 container custom-card">
+    <h5 class="fw-bold">Output</h5>
+    <p>{{ prob.output }}</p>
+</div>
+
+<div class="mt-4 container custom-card">
+    <h5 class="fw-bold">Constraint</h5>
+    <p>{{ prob.constraint }}</p>
+</div>
+
+<div class="mt-4 container custom-card">
+    <h5 class="fw-bold">Sample Input</h5>
+    <p>{{ sample.input }}</p>
+</div>
+
+<div class="mt-4 container custom-card">
+    <h5 class="fw-bold">Sample Output</h5>
+    <p>{{ sample.output }}</p>
+</div>
+
+
+{% endblock %}

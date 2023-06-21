@@ -1,0 +1,68 @@
+.problems-solved-div{
+    padding: 20px;
+}
+
+.yearly-calender{
+    margin: 5px; 
+    /* border: 1px solid black; */
+    /* border-radius: 15px; */
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    height : 200px;
+    /* justify-content: space-between; */
+    align-items: left;
+    justify-content: left;
+}
+
+
+.heat-box{
+    width: 15px;
+    height: 15px;
+    margin: 1px;
+    border-radius: 4px;
+    background-color: #e5e7eb;
+}
+
+.box1{
+    background-color: #bbf7d0;
+}
+
+.box2{
+    background-color: #6ee7b7;
+}
+
+.box3{
+    background-color: #059669;
+}
+
+.problems_solved{
+    /* width: 200px; */
+    display: flex;
+    flex-direction: row;
+    /* align-items: center; */
+    justify-content: center;
+}
+
+.solved{
+    height: 40px;
+    background-color: #51d0a8;
+    border-radius: 8px 0px 0px 8px;
+    transition: all 0.2s ;
+}
+
+:hover.solved{
+    margin: 2px;
+}
+
+.unsolved{
+    height: 40px;
+    background-color: rgb(73, 80, 80);
+    border-radius: 0px 8px 8px 0px;
+    transition: all 0.2s ;
+}
+
+:hover.unsolved{
+    margin: 2px;
+}

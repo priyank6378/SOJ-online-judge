@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="custom-card container p-0">
+    <div class="container " style="margin-top:20px">
+        <h5 style="font-weight: bold; font-size:30px;">Problem Set</h4>
+        <!-- <div style="border-bottom: 1px solid; margin-bottom:20px;"><a class="custom-link" href="">TASKS</a><span> | </span></div>
+     -->
+        <!-- <h6 style="font-weight: bold;">General</h6> -->
+    
+    </div>
+
+
+    <div class="container ">
+        <table class="table my-0">
+            {% for prob in problems %}
+            <tr class="data-row" >
+                <td>
+                    <i class="bi bi-file-earmark-fill mr-2"></i>
+                    <a class="task-link" href="{{ url_for('main.task', id=prob.id) }}">{{ prob.title }}</a>
+                </td>
+                <td style="text-align: right;">
+                    {{ prob.solved }}/{{ prob.tried }}  
+                </td>
+                {% if current_user.is_authenticated %}
+                    {% if solved_status[prob.id-1] == 'A' %}
+                        <td style="background-color: #a7f3d0; text-align:center; width:100px; border-radius: 8px; ">
+                            Done
+                        </td>
+                    {% elif solved_status[prob.id-1] == 'W' %}
+                        <td style="background-color: #f43f5e; text-align:center; border-radius: 8px; ">
+                            Wrong
+                        </td>
+                    {% else %}
+                        <td style="background-color: gainsboro; text-align:center; border-radius: 8px; ">
+                            -
+                        </td>
+                    {% endif %}
+                {% else %}
+                    <td style="background-color: #d1d5db; text-align:center; border-radius: 8px; ">
+                        -
+                    </td>
+                {% endif %}
+                
+                
+            </tr>
+            {% endfor %}
+        </table>    
+    </div>
+</div>
+
+<script>
+    var table_rows = document.getElementsByClassName("data-row");
+    for (var i = 0  ; i<table_rows.length ; i+=2){
+        table_rows[i].style.backgroundColor = "#f3f4f6";
+    }
+</script>
+    
+
+{% endblock %}

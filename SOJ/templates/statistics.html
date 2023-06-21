@@ -1,0 +1,77 @@
+{% extends 'layout.html' %}
+
+
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/statistics.css') }}">
+
+
+<div class="d-flex felx-row align-items-center justify-content-center" style="margin-top: 50px;">
+    <div class="custom-card" style="margin-top: 20px;width: 600px; height: 100px; background-color: #f5f5f5;">
+        <p style="
+                margin:0px;
+                text-align: center;
+                opacity: 0.8;
+                margin-bottom: 10px;
+            ">
+            Problem Solved</p>
+        <div class="problems_solved">
+            <div class="solved" style="width:{{ 500*(solved/total_problems) }}px;"
+            data-bs-toggle="tooltip" data-bs-placement="right" title="Solved : {{ solved }}"></div>
+
+            <div class="unsolved" style="width:{{ 500-500*(solved/total_problems) }}px;"
+            data-bs-toggle="tooltip" data-bs-placement="left" title="Unolved : {{ total_problems-solved }}"></div>
+        </div>
+    </div>
+    <div class="custom-card d-flex flex-column justify-content-center align-items-center " style="margin-top: 20px;width: 290px; height: 100px; background-color: #f5f5f5; font-size:18px; padding:20px; margin-left:10px;">
+        <p style="margin:0px; opacity:0.8;">Total Problems : {{ total_problems }}</p>
+        <p style="margin:0px; opacity:0.8;">Total Solved : {{ solved }}</p>
+    </div>
+</div>
+
+
+
+<div class="d-flex felx-row align-items-center justify-content-center" style="min-width: 900px;">
+    <div class="custom-card" style="margin-top: 20px;width: 900px; background-color: #f5f5f5;">
+        <p style="
+                margin:0px;
+                text-align: center;
+                opacity: 0.8;
+            ">
+            Yearly Submissions (last 365 days)</p>
+        <div class="yearly-calender">
+            {% for i in range(365) %} 
+                {% if subs[i] >= 1 and subs[i]<=2 %}
+                    <div class="heat-box box1"
+                    data-bs-toggle="tooltip" data-bs-placement="right" title="{{ '{1} Submissions : {0}'.format(subs[i], dates[i]) }}"></div>
+                {% elif subs[i] > 2 and subs[i] <= 4 %}
+                    <div class="heat-box box2"
+                    data-bs-toggle="tooltip" data-bs-placement="right" title="{{ '{1} Submissions : {0}'.format(subs[i], dates[i]) }}"></div>
+                {% elif subs[i] > 5 %}
+                    <div class="heat-box box3"
+                    data-bs-toggle="tooltip" data-bs-placement="right" title="{{ '{1} Submissions : {0}'.format(subs[i], dates[i]) }}"></div>
+                {% else %}
+                    <div class="heat-box"
+                    data-bs-toggle="tooltip" data-bs-placement="right" title="{{ '{1} Submissions : {0}'.format(subs[i], dates[i]) }}"></div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+<!-- <div class="container d-flex flex-row custom-card problems-solved-div w-50 justify-content-evenly">
+    <div style="width:300px ; height:300px;">
+        <img src="" alt="chart">
+    </div>
+    <div class="d-flex flex-column justify-content-center" style="padding-left: 20px;" >
+        <h5 class="text-muted">Problems Solved : {{ solved }}</h5>
+        <h5 class="text-muted">Total Problems : {{ total_problems }}</h5>
+
+    </div>
+</div> -->
+
+<div class="daily-problems-solved"></div>
+
+{% endblock %}
