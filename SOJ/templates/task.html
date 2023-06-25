@@ -8,7 +8,7 @@
         <a class="custom-link" href="" style="padding:3px;">TASK |</a>
         <a class="custom-link" href="{{ url_for('main.submit' , id=prob.id) }}" style="padding:3px;"> SUBMIT |</a>
         <a class="custom-link" href="{{ url_for('main.result' , prob_id=prob.id) }}" style="padding:3px;"> RESULTS |</a>
-        <a class="custom-link" href="" style="padding:3px;"> STATISTICS</a>
+        <a class="custom-link" href="{{ url_for('main.prob_stats', id=prob.id) }}" style="padding:3px;"> STATISTICS</a>
     </div>
 </div>
 
@@ -43,12 +43,12 @@
 
 <div class="mt-4 container custom-card">
     <h5 class="fw-bold">Sample Input</h5>
-    <p>{{ sample.input }}</p>
+    <pre>{{ sample.input }}</pre>
 </div>
 
 <div class="mt-4 container custom-card">
     <h5 class="fw-bold">Sample Output</h5>
-    <p>{{ sample.output }}</p>
+    <pre>{{ sample.output }}</pre>
 </div>
 
 

@@ -39,8 +39,8 @@
             </div>
             <div>
                 {% if current_user.is_authenticated %}
-                <img class="rounded-circle" src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}" width="25" height="25" style="margin-right:20px;">
-                    <a class="custom-link" href="{{ url_for('users.account') }}">{{ current_user.username }} </a><span>| </span>       
+                <img class="rounded-circle" src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}" width="25" height="25" >
+                    <a class="custom-link" href="{{ url_for('users.account') }}">{{ current_user.username }} </a><span style="color: #34d399  ;">| </span>       
                     <a class="custom-link" href="{{ url_for('users.logout') }}">Logout</a>         
                 {% else %}
                     <a class="custom-link" href="{{ url_for('users.login') }}">Login</a>

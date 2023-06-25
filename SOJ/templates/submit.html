@@ -9,7 +9,7 @@
         <a class="custom-link" href="{{ url_for('main.task', id=prob.id) }}" style="padding:3px;">TASK |</a>
         <a class="custom-link" href="" style="padding:3px;"> SUBMIT |</a>
         <a class="custom-link" href="{{ url_for('main.result' , prob_id=prob.id) }}" style="padding:3px;"> RESULTS |</a>
-        <a class="custom-link" href="" style="padding:3px;"> STATISTICS</a>
+        <a class="custom-link" href="{{ url_for('main.prob_stats', id=prob.id) }}" style="padding:3px;"> STATISTICS</a>
     </div>
 </div>
 

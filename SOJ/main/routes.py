@@ -1,7 +1,9 @@
 from sqlite3 import Connection
+from threading import Thread
+
 from flask import render_template, url_for, flash, redirect, request, Blueprint, abort
 from flask_login import login_user, current_user, logout_user, login_required
-from SOJ.models import Problem, TestCases, Submission
+from SOJ.models import Problem, TestCases, Submission, User
 from SOJ.main.forms import FileForm, AddProblemForm, AddTestCasesForm
 from SOJ.main.utils import run_code, get_dates
 from SOJ import db
@@ -47,40 +49,19 @@ def submit(id):
         # save the file and check for the result 
         code = request.files['code'].stream.read().decode('utf-8')
         lang = form.language.data
-        uid = current_user.id
-        pid = id
+        pid = id # problem id
         tests = TestCases.query.filter_by(prob_id=pid)
         test_cases = []
         for test in tests:
             test_cases.append((test.input, test.output))
-        results , runtime = run_code(code, lang, test_cases)
-        result = 'A'
-        for r in results :
-            if r == 'W':
-                result = 'W'
-                break
 
-        sub = Submission()
-        sub.user_id = uid
-        sub.prob_id = pid
-        sub.code = code
-        sub.language = lang
-        sub.runtime = runtime
-        sub.status = result
-        db.session.add(sub)
+        t = Thread(target=run_code,
+                   args=[code, lang, test_cases, current_user.id, pid])
+        t.start()
         
-        q = Problem.query.filter_by(id=pid).first()
-        if result == 'A':
-            q.solved += 1
-        q.tried += 1
-        db.session.commit()
-        
-        if result == 'A':
-            flash("Accepted!", 'success')
-        else :
-            flash("Wrong Answer!", 'danger')
-
-        return redirect(url_for('main.test'))
+        flash("Problem is in queue!", 'info')
+        return redirect(url_for('main.result', prob_id=id))
+    
     else :
         flash("wrong file format", 'danger')
         return redirect(url_for('main.submit', id=id))
@@ -139,7 +120,7 @@ def add_problem():
                        constraint=request.form['constraints'])
         db.session.add(prob)
         db.session.commit()
-        return redirect(url_for('main.add_testcase', prob_id=prob.id))
+        return redirect(url_for('main.add_testcase', id=prob.id))
     if (current_user.username == 'zoid'):
         form = AddProblemForm()
         return render_template("add_problem.html", form=form)
@@ -161,7 +142,31 @@ def add_testcase(id):
     else :
         abort(404)
 
+
+@main.route('/prob_stats/<int:id>')
+def prob_stats(id):
+    prob = Problem.query.filter_by(id=id).first()
+    subs = Submission.query.filter_by(prob_id=id, status='A').all()
+    total_subs = len(subs)
+    # sorting subs on runtime
+    subs.sort(key=lambda x: x.runtime)
     
+    user_visited = {}
+    for s in subs[::-1]:
+        if (s.user_id not in user_visited):
+            user_visited[s.user_id] = s.runtime
+        if (len(user_visited) == 10):
+            break
+    
+    top_10 = []
+    ind = 0
+    for (uid, rtime) in sorted(user_visited.items(), key=lambda x: x[1]):
+        top_10.append((ind,User.query.filter_by(id=uid).first().username, rtime))
+        ind += 1
+
+    return render_template("prob_stats.html", prob=prob, top_10 = top_10)
+
+
 @main.app_errorhandler(404)
 def error_404(error):
     return render_template('404.html'), 404

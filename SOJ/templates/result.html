@@ -17,7 +17,7 @@
         <a class="custom-link" href="{{ url_for('main.task', id=prob.id) }}" style="padding:3px;">TASK |</a>
         <a class="custom-link" href="{{ url_for('main.submit', id=prob.id) }}" style="padding:3px;"> SUBMIT |</a>
         <a class="custom-link" href="" style="padding:3px;"> RESULTS |</a>
-        <a class="custom-link" href="" style="padding:3px;"> STATISTICS</a>
+        <a class="custom-link" href="{{ url_for('main.prob_stats', id=prob.id) }}" style="padding:3px;"> STATISTICS</a>
     </div>
 </div>
 
@@ -39,12 +39,20 @@
                         {% for sub in submissions %}
                             <tr class="data-row" >
                                 <td>{{ sub.date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                                <td>{{ "{} s".format((sub.runtime[:4])) }}</td>
+                                {% if sub.runtime == "-1" %}
+                                    <td>Calculating...</td>
+                                {% else %}
+                                    <td>{{ "{} s".format((sub.runtime[:4])) }}</td>
+                                {% endif %}
                                 <td>{{ sub.language }}</td>
                                 {% if sub.status=='A' %}
-                                    <td style="background-color:#a7f3d0;">{{ sub.status }}</td>
+                                    <td style="background-color:#a7f3d0;">Accepted</td>
                                 {% elif sub.status=='W' %}
-                                    <td style="background-color: #f87171;">{{ sub.status }}</td>
+                                    <td style="background-color: #f87171;">Wrong</td>
+                                {% elif sub.status=='T' %}
+                                    <td style="background-color: #f87171;">TLE</td>
+                                {% elif sub.status=='Q' %}
+                                    <td style="background-color: #d5d5d5;">In queue...</td>
                                 {% else %}
                                     <td>{{ sub.status }}</td>
                                 {% endif %}

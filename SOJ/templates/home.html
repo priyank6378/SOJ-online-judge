@@ -17,7 +17,10 @@
             <tr class="data-row" >
                 <td>
                     <i class="bi bi-file-earmark-fill mr-2"></i>
-                    <a class="task-link" href="{{ url_for('main.task', id=prob.id) }}">{{ prob.title }}</a>
+                    <div class="d-flex flex-row">
+                        <a class="task-link" href="{{ url_for('main.task', id=prob.id) }}">{{ prob.title }}</a>
+                        <!-- <div style="text-align: right; width:100%;">{{ prob.categories }}</div> -->
+                    </div>
                 </td>
                 <td style="text-align: right;">
                     {{ prob.solved }}/{{ prob.tried }}  
@@ -27,7 +30,7 @@
                         <td style="background-color: #a7f3d0; text-align:center; width:100px; border-radius: 8px; ">
                             Done
                         </td>
-                    {% elif solved_status[prob.id-1] == 'W' %}
+                    {% elif solved_status[prob.id-1] == 'W' or solved_status[prob.id-1] == 'T' %}
                         <td style="background-color: #f43f5e; text-align:center; border-radius: 8px; ">
                             Wrong
                         </td>
