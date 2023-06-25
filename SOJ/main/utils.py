@@ -51,14 +51,7 @@ def run_code(code : str, lang: str, test_case : list, user_id: int, prob_id: int
             tmp_file.write(code)
             tmp_file.close()
             os.system("gcc tmp/tmp.c -o tmp/tmp")
-prog_out.txt
-prog_out.txt
-prog_out.txt
-prog_out.txt
-prog_out.txt
-prog_out.txt
-prog_out.txt
-prog_out.txt
+
         if lang == 'python':
             tmp_file = open("tmp/tmp.py", "w")
             tmp_file.write(code)
