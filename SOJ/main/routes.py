@@ -1,11 +1,12 @@
 from sqlite3 import Connection
 from threading import Thread
+import os
 
 from flask import render_template, url_for, flash, redirect, request, Blueprint, abort
 from flask_login import login_user, current_user, logout_user, login_required
 from SOJ.models import Problem, TestCases, Submission, User
 from SOJ.main.forms import FileForm, AddProblemForm, AddTestCasesForm
-from SOJ.main.utils import run_code, get_dates
+from SOJ.main.utils import run_code, get_dates, thread_killer
 from SOJ import db
 
 main = Blueprint('main', __name__)
@@ -55,10 +56,14 @@ def submit(id):
         for test in tests:
             test_cases.append((test.input, test.output))
 
+        os.system("rm -rf tmp")
+        file_name = str(current_user.id) + "_" + str(pid)
         t = Thread(target=run_code,
                    args=[code, lang, test_cases, current_user.id, pid])
         t.start()
-        
+        t_killer = Thread(target=thread_killer,
+                          args = [file_name])       
+        t_killer.start() 
         flash("Problem is in queue!", 'info')
         return redirect(url_for('main.result', prob_id=id))
     
@@ -92,6 +97,9 @@ def test():
 def dashboard():
     total_problems = len(Problem.query.all())
     accepted_subs = Submission.query.filter_by(user_id=current_user.id, status='A').all()
+    ac = len(accepted_subs)
+    wa = len(Submission.query.filter_by(user_id=current_user.id, status='W').all())
+    tle = len(Submission.query.filter_by(user_id=current_user.id, status='T').all())
     solved = 0
     dates = get_dates()
     subs = []
@@ -107,7 +115,7 @@ def dashboard():
     solved = len(unique)
     cursor.close()
     tmp_db.close()
-    return render_template("statistics.html", solved=solved, total_problems=total_problems, subs=subs, dates=dates)
+    return render_template("statistics.html", solved=solved, total_problems=total_problems, subs=subs, dates=dates, title="Dashboard", ac=ac, wa=wa, tle=tle)
 
 @main.route('/add_problem' , methods=['POST', 'GET'])
 @login_required

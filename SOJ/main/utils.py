@@ -1,5 +1,6 @@
 import celery 
 import os
+import subprocess
 from time import time, sleep
 from threading import Thread
 import multiprocessing as mp
@@ -33,96 +34,104 @@ def run_code(code : str, lang: str, test_case : list, user_id: int, prob_id: int
     cursor.close()
     conn.commit()
     conn.close()
-
+    file_name = str(user_id) + "_" + str(prob_id)
     def run_code_thread():
         nonlocal terminated
         nonlocal max_runtime
-
-        os.mkdir("tmp")
+        nonlocal file_name
+        os.mkdir(file_name)
 
         if lang == "c++":
-            tmp_file = open("tmp/tmp.cpp", "w")
+            tmp_file = open(f"{file_name}/{file_name}.cpp", "w")
             tmp_file.write(code)
             tmp_file.close()
-            os.system("g++ tmp/tmp.cpp -o tmp/tmp")
+            os.system(f"g++ {file_name}/{file_name}.cpp -o {file_name}/{file_name}")
         
         if lang == "c":
-            tmp_file = open("tmp/tmp.c", "w")
+            tmp_file = open(f"{file_name}/{file_name}.c", "w")
             tmp_file.write(code)
             tmp_file.close()
-            os.system("gcc tmp/tmp.c -o tmp/tmp")
+            os.system(f"gcc {file_name}/{file_name}.c -o {file_name}/{file_name}")
 
         if lang == 'python':
-            tmp_file = open("tmp/tmp.py", "w")
+            tmp_file = open(f"{file_name}/{file_name}.py", "w")
             tmp_file.write(code)
             tmp_file.close()
         
         for test in test_case:
-            f = open("tmp/inp.txt", "w")
+            f = open(f"{file_name}/{file_name}_inp.txt", "w")
             f.write(test[0])
             f.close()
-            f = open("tmp/out.txt", 'w')
+            f = open(f"{file_name}/{file_name}_out.txt", 'w')
             f.write(test[1])
             f.close()
             
             if lang == "c++":
                 execution_time = time()
-                os.system('./tmp/tmp < tmp/inp.txt > tmp/prog_out.txt')
+                os.system(f'./{file_name}/{file_name} < {file_name}/{file_name}_inp.txt > {file_name}/prog_{file_name}_out.txt')
                 execution_time = time() - execution_time
                 max_runtime = max(max_runtime, execution_time)
-                if os.system('diff tmp/prog_out.txt tmp/out.txt') == 0:
+                if os.system(f'diff {file_name}/prog_{file_name}_out.txt {file_name}/{file_name}_out.txt') == 0:
                     results.append("A")
                 else:
                     results.append("W")
             
             if lang == "c":
                 execution_time = time()
-                os.system('./tmp/tmp < tmp/inp.txt > tmp/prog_out.txt')
+                os.system(f'./{file_name}/{file_name} < {file_name}/{file_name}_inp.txt > {file_name}/prog_{file_name}_out.txt')
                 execution_time = time() - execution_time
                 max_runtime = max(max_runtime, execution_time)
-                if os.system('diff tmp/prog_out.txt tmp/out.txt') == 0:
+                if os.system(f'diff {file_name}/prog_{file_name}_out.txt {file_name}/{file_name}_out.txt') == 0:
                     results.append("A")
                 else:
                     results.append("W")
             
             if lang == "python":
                 execution_time = time()
-                os.system('python3 tmp/tmp.py < tmp/inp.txt > tmp/prog_out.txt')
+                command = f'python3 {file_name}/{file_name}.py < {file_name}/{file_name}_inp.txt > {file_name}/prog_{file_name}_out.txt'
+                os.system(command)
                 execution_time = time() - execution_time
                 max_runtime = max(max_runtime, execution_time)
-                if os.system('diff tmp/prog_out.txt tmp/out.txt') == 0:
+                if os.system(f'diff {file_name}/prog_{file_name}_out.txt {file_name}/{file_name}_out.txt') == 0:
                     results.append("A")
                 else:
                     results.append("W")
         
         # clean up
-        os.system("rm -rf tmp")
-        nonlocal terminated
         terminated = True
+        # print("Exiting code run thread!")
     
-    os.system("rm -rf tmp")
+    os.system(f"rm -rf {file_name}")
     judge_thread = Thread(target=run_code_thread, args=[])
     judge_thread.start()
     sleep(2.2)
     r = "A"
+    # print("Terminated status: ", terminated)
     if terminated :
         for x in results:
             if x == 'W':
                 r = 'W'
                 break
     else :
-        os.system("kill $(ps aux | grep 'python3 tmp/tmp.py < tmp/inp.txt > tmp/prog_out.txt' | awk '{print $2}')")
-        os.system("kill $(ps aux | grep './tmp/tmp < tmp/inp.txt > tmp/prog_out.txt' | awk '{print $2}')")
+        # print('TLE ELSE BLOCK')
         r = 'T'
         max_runtime = 2.001
-    # print( "cur dir : ",os.path.abspath(os.curdir))
+        # print("EXITING TLE BLOCK")
+
     conn = Connection("instance/site.db")
     cursor = conn.cursor()
-    # cursor.execute("INSERT INTO submission (user_id, prob_id, code, language, date, runtime, status) VALUES (?, ?, ?, ?, ?, ?, ?)", (user_id, prob_id, code, lang, datetime.utcnow(), max_runtime, r))
     cursor.execute("UPDATE submission SET runtime = ?, status = ? WHERE user_id = ? AND prob_id = ? AND code = ?", (max_runtime, r, user_id, prob_id, code))
     cursor.close()
     conn.commit()
     conn.close()
+    os.system(f"rm -rf {file_name}")
+
+def thread_killer(file_name):
+    # print("RUNNIN THREAD_KILLER FUNCTION")
+    sleep(10)
+    os.system(f"kill $(ps aux | grep 'python3 {file_name}/{file_name}.py' | awk " + "'{print $2}')")
+    os.system(f"kill $(ps aux | grep './{file_name}/{file_name}' | awk " + "'{print $2}')")
+    # print("EXITING THREAD_KILLER FUNCTION")
 
 def get_dates():
     def daterange(date1, date2):
