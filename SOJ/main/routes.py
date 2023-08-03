@@ -14,10 +14,11 @@ main = Blueprint('main', __name__)
 @main.route("/home", methods=['GET', 'POST'])
 @main.route("/", methods=['GET', 'POST'])
 def home():
-    problems = Problem.query.all()
-    solved_status = ['-']*len(problems)
+    page = request.args.get('page', 1, type=int)
+    problems = Problem.query.paginate(page=page, per_page=20)
+    solved_status = ['-']*len(problems.items)
     if (current_user.is_authenticated):
-        for prob_id in range(len(problems)):
+        for prob_id in range(len(problems.items)):
             submission = Submission.query.filter_by(user_id=current_user.id, prob_id=prob_id+1, status='W').first()
             if submission:
                 solved_status[submission.prob_id-1] = 'W'
@@ -26,7 +27,7 @@ def home():
                 solved_status[submission.prob_id-1] = 'A'
     
     print(solved_status)
-    return render_template("home.html", title='home', problems=problems, solved_status=solved_status, n=len(problems));
+    return render_template("home.html", title='home', problems=problems, solved_status=solved_status, n=len(problems.items));
 
 @main.route("/task/<int:id>")
 def task(id):
