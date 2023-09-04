@@ -22,6 +22,9 @@ def home():
             submission = Submission.query.filter_by(user_id=current_user.id, prob_id=prob_id+1, status='W').first()
             if submission:
                 solved_status[submission.prob_id-1] = 'W'
+	    submission = Submission.query.filter_by(user_id=current_user.id, prob_id=prob_id+1, status='T').first()
+            if submission:
+                solved_status[submission.prob_id-1] = 'T'
             submission = Submission.query.filter_by(user_id=current_user.id, prob_id=prob_id+1, status='A').first()
             if submission:
                 solved_status[submission.prob_id-1] = 'A'
